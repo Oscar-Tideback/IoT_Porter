@@ -2,7 +2,7 @@ const AWS = require('aws-sdk');
 
 // Create an IotData object that can be used to communicate with the AWS IoT service
 let IotData = new AWS.IotData({
-  endpoint: 'a2hh4nrz69x658-ats.iot.us-east-1.amazonaws.com'
+  endpoint: 'xxxxxxxxxxx-xxx.xxx.xxxxxxxx.amazonaws.com'
 });
 
 exports.handler = async (event) => {
