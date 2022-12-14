@@ -2,7 +2,7 @@
 I have an unused IoT device a ESP32 with a E-Paper and an accelerometer sensor, I will utelize this for my school project.  
 
 ### Use cases
-Use case 1 - Notify me to bring an umbrella in case of risk for rain
+Use case 1 - Give me a short 
 Use case 2 - Notify me of door events, when door is opened/closed
 1. A simple counter that counts main door events in my house
 2. Display local weather information for the next 12 hours on a screen at the main door
