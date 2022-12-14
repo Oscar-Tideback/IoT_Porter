@@ -8,9 +8,9 @@ I have an unused IoT device a ESP32 with a E-Paper and an accelerometer sensor, 
 ### Project components
 Hardware.
 Adafruit MagTag.
-  ESP32-S2 240MHz Tensilica processor.
-  E-Paper 2.9" grayscale display with 296x128 pixels.
-  Triple-axis accelerometer (LIS3DH)
+ * ESP32-S2 240MHz Tensilica processor.
+ * E-Paper 2.9" grayscale display with 296x128 pixels.
+ * Triple-axis accelerometer (LIS3DH)
   <hr>
 
 #### This flow allows the device to receive answers to questions posed by the user in real-time, leveraging the power of IoT with Al and cloud technology.
