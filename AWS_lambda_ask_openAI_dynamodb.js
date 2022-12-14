@@ -34,17 +34,16 @@ const req = https.request(options, (res) => {
     // When the response is received, parse the response and extract the text
     res.on('data', (d) => {
         const data = JSON.parse(d.toString());
-        const text = data.choices.map(item => item.text);
 
         // Print the response text to the console
-        console.log(text);
+        console.log(data.choices[0].text);
 
         // Store the response text in DynamoDB
         dynamoDB.put({
             TableName: 'openAI_chat',
             Item: {
                 'timestamp': new Date().toString(),
-                'payload': JSON.stringify(text),
+                'payload': data.choices[0].text,
                 'id': new Date().getTime().toString()
             }
         }, (err) => {
