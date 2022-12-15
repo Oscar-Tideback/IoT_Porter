@@ -31,7 +31,7 @@ between the device and the cloud.
 
 5. DynamoDB triggers an MQTT message to be sent, which is received by the device and displayed on its screen.
 
-6. DataSet loT Analytics can also be used to display graphical representations of the data.
+6. DataSet loT Analytics is also used to display graphical representations of the data.
 
 
 ### Some example of working proof of concept.
