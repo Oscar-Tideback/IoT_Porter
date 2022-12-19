@@ -44,7 +44,17 @@ between the device and the cloud.
 ![Screenshot_1267](/assets/Screenshot_1265.png)
 
 
-### R...
-To ensure the security of our IoT solution, I have chosen to collect all credential strings in AWS Secrets Manager. Currently, the strings are instead in lambda files for ease of handling. On the device side, I recommend saving credentials during manufacturing and placing them on the hcm chip. This is a better solution than using a Secrets.h file.
+### .
+To transfer data from DynamoDB to S3 for cold storage, use AWS Data Pipeline same as QuickSight. 
+
+* DynamoDB is the source for the data flow.
+
+* S3 is the target for the data flow. Specify the S3 bucket where you want to save the data.
+
+* Configure the pipeline settings, such as scheduling, retry logic, and alarms.
+
+The pipeline will run according to the configured schedule and transfer data from DynamoDB to S3 for cold storage. You can monitor the pipeline by going to the console and checking the status of the active pipeline.
+
+To ensure the security of my IoT solution, I have chosen to collect all credential strings in AWS Secrets Manager. Currently, the strings are instead in lambda files for ease of handling. On the device side, I recommend saving credentials during manufacturing and placing them on the hcm chip. This is a better solution than using a Secrets.h file.
 
 In terms of scalability, I have chosen to use AWS because all parts on the AWS side are naturally scalable. On the device side, I have not encountered any problems with scalability either. A device can self-report when it wants a new message to display and can send its events to its own channel and save them separately from other devices without any problems.
