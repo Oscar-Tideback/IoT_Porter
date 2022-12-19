@@ -12,15 +12,12 @@
 #include <ArduinoJson.h>
 #include "Secrets.h"
 #include "WiFi.h"
-#include "images.h"
 
 #define EPD_DC      7
 #define EPD_CS      8
 #define EPD_BUSY    -1 //5
 #define SRAM_CS     -1 //8
 #define EPD_RESET   6
-
-//ThinkInk_290_Grayscale4_T5 display(EPD_DC, EPD_RESET, EPD_CS, SRAM_CS, EPD_BUSY);
 
 #define ENABLE_GxEPD2_GFX 0
 #define VREF_PIN         4
@@ -35,39 +32,36 @@
 #define LIS3DH_MOSI 11
 // Used for hardware & software SPI
 #define LIS3DH_CS 10
-
-//partial update works in some rotations (0 and 2)
-//if you have another microcontroller or another e-ink display module you have to change the following lines
-GxEPD2_BW<GxEPD2_290_T5, GxEPD2_290_T5::HEIGHT> display(GxEPD2_290_T5(EPD_CS, EPD_DC, EPD_RESET, -1));
-
-Adafruit_NeoPixel strip( PIXEL_COUNT, NEOPIX_PIN, NEO_GRB + NEO_KHZ800 );
-
-U8G2_FOR_ADAFRUIT_GFX u8g2Fonts;
-unsigned long counter = 1;
-static bool lightOn = false;
-static bool imageOn = false;
-static char *str;
-
-// I2C
-Adafruit_LIS3DH lis = Adafruit_LIS3DH();
-
 // The higher the value the less sensitive the detection.
 // This changes based on the accelerometer range. Good values are
 // For 16G, try 5-10 for 8G, try 10-20. for 4G try 20-40. for 2G try 40-80
 #define CLICKTHRESHHOLD 40
-
 // AWS pubSub
 #define AWS_IOT_PUBLISH_TOPIC   "esp32/pub"
 #define AWS_IOT_SUBSCRIBE_TOPIC "esp32/sub"
 
+//ThinkInk_290_Grayscale4_T5 display(EPD_DC, EPD_RESET, EPD_CS, SRAM_CS, EPD_BUSY);
+//partial update works in some rotations (0 and 2)
+//if you have another microcontroller or another e-ink display module you have to change the following lines
+GxEPD2_BW<GxEPD2_290_T5, GxEPD2_290_T5::HEIGHT> display(GxEPD2_290_T5(EPD_CS, EPD_DC, EPD_RESET, -1));
+
+Adafruit_NeoPixel strip(PIXEL_COUNT, NEOPIX_PIN, NEO_GRB + NEO_KHZ800);
+
+// I2C
+Adafruit_LIS3DH lis = Adafruit_LIS3DH();
+
 WiFiClientSecure net = WiFiClientSecure();
-/*
-The maximum size for packets being published and received is set by default to 128 bytes.
+
+/*The maximum size for packets being published and received is set by default to 128 bytes.
 To change the buffer sizes, you need to use MQTTClient client(256)
 instead of just MQTTClient client on the top of your sketch.
-The passed value denotes the read and write buffer size.
-*/
+The passed value denotes the read and write buffer size.*/
 MQTTClient client = MQTTClient(256);
+
+U8G2_FOR_ADAFRUIT_GFX u8g2Fonts;
+unsigned long counter = 1;
+static bool lightOn = false;
+static char *str;
 
 void connectAWS()
 {
@@ -79,7 +73,6 @@ void connectAWS()
     delay(500);
     Serial.print(".");
   } 
-
   // Configure WiFiClientSecure to use the AWS IoT device credentials
   net.setCACert(AWS_CERT_CA);
   net.setCertificate(AWS_CERT_CRT);
@@ -120,7 +113,16 @@ void publishMessage()
   Serial.println(AWS_IOT_PUBLISH_TOPIC);
 }
 
-void setMessage(const char* str){
+void messageHandler(String &topic, String &payload) {
+  Serial.println("incoming: " + topic + " - " + payload);
+  StaticJsonDocument<200> doc;
+  deserializeJson(doc, payload);
+  const char* message = doc["payload"][0];
+  //Serial.println(message);
+  displayMessage(message);
+}
+
+void displayMessage(const char* str){
   display.setPartialWindow(0, 0, 298, 70); // x, y, width, height
   int16_t tbx, tby; uint16_t tbw, tbh;
   display.getTextBounds(str, 2, 2, &tbx, &tby, &tbw, &tbh);
@@ -131,15 +133,6 @@ void setMessage(const char* str){
 
     u8g2Fonts.println(str);
   } while (display.nextPage());
-}
-
-void messageHandler(String &topic, String &payload) {
-  Serial.println("incoming: " + topic + " - " + payload);
-  StaticJsonDocument<200> doc;
-  deserializeJson(doc, payload);
-  const char* message = doc["payload"][0];
-  //Serial.println(message);
-  setMessage(message);
 }
 
 void setup(void) {
@@ -185,7 +178,6 @@ void setup(void) {
   }
   
   lis.setRange(LIS3DH_RANGE_2_G);   // 2, 4, 8 or 16 G!
-
   // 0 = turn off click detection & interrupt
   // 1 = single click only interrupt output
   // 2 = double click only interrupt output, detect single click
@@ -208,11 +200,11 @@ void setNeoPixelsColor( uint32_t color ) {
 
 void ledLight(){
 if(!lightOn){
-  setNeoPixelsColor( strip.Color(0, 0, 255) );
+  setNeoPixelsColor(strip.Color(0, 0, 255)); // Blue color
   lightOn = true;
 }
 else{
-  digitalWrite( LED_BUILTIN, HIGH );
+  digitalWrite(LED_BUILTIN, HIGH);
   strip.clear();
   strip.show();
   lightOn = false;

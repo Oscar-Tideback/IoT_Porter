@@ -42,3 +42,9 @@ between the device and the cloud.
 ### Graphical representation via Quicksight
 *Well not much to display only one day of data*
 ![Screenshot_1267](/assets/Screenshot_1265.png)
+
+
+### R...
+To ensure the security of our IoT solution, I have chosen to collect all credential strings in AWS Secrets Manager. Currently, the strings are instead in lambda files for ease of handling. On the device side, I recommend saving credentials during manufacturing and placing them on the hcm chip. This is a better solution than using a Secrets.h file.
+
+In terms of scalability, I have chosen to use AWS because all parts on the AWS side are naturally scalable. On the device side, I have not encountered any problems with scalability either. A device can self-report when it wants a new message to display and can send its events to its own channel and save them separately from other devices without any problems.
